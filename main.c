@@ -22,7 +22,7 @@ struct graph
 
 struct vertex *createVertex(char name, char infection)
 {
-    struct vertex *newvertex = (struct vertex *)calloc(1,sizeof(struct vertex));
+    struct vertex *newvertex = (struct vertex *)calloc(1, sizeof(struct vertex));
     newvertex->down = NULL;
     newvertex->next = NULL;
     newvertex->name = name;
@@ -32,7 +32,7 @@ struct vertex *createVertex(char name, char infection)
 
 struct relationship *createRelationship(char name, char infection)
 {
-    struct relationship *newrelationship = (struct relationship *)calloc(1,  sizeof(struct relationship));
+    struct relationship *newrelationship = (struct relationship *)calloc(1, sizeof(struct relationship));
     newrelationship->infection = infection;
     newrelationship->name = name;
     newrelationship->next = NULL;
@@ -41,7 +41,7 @@ struct relationship *createRelationship(char name, char infection)
 
 struct graph *createGraph()
 {
-    struct graph *newgraph = (struct graph *) calloc (1, sizeof(struct graph));
+    struct graph *newgraph = (struct graph *)calloc(1, sizeof(struct graph));
     newgraph->vertexStart = NULL;
     newgraph->vertexSize = 0;
     return newgraph;
@@ -53,7 +53,7 @@ struct vertex *searchVertexInGraph(struct vertex *vertex, char vertexName)
     {
         return NULL;
     }
-    
+
     if (vertex->name == vertexName)
     {
         return vertex;
@@ -64,11 +64,11 @@ struct vertex *searchVertexInGraph(struct vertex *vertex, char vertexName)
 
 struct vertex *addvertexInGraph(struct graph *graph, struct vertex *vertex, char name, char infec)
 {
-    if(graph->vertexStart == NULL)
+    if (graph->vertexStart == NULL)
     {
-         graph->vertexStart = createVertex(name,infec);
-         graph->vertexSize++;
-         return graph->vertexStart;
+        graph->vertexStart = createVertex(name, infec);
+        graph->vertexSize++;
+        return graph->vertexStart;
     }
     else
     {
@@ -77,25 +77,23 @@ struct vertex *addvertexInGraph(struct graph *graph, struct vertex *vertex, char
         {
             if (auxVertex->down == NULL)
             {
-                auxVertex->down = createVertex(name,infec);
+                auxVertex->down = createVertex(name, infec);
                 graph->vertexSize++;
-                return  auxVertex;
+                return auxVertex;
             }
             auxVertex = auxVertex->down;
         }
-        
     }
-    
 }
 
 struct relationship *addRelationshipInGraph(struct vertex *vertexRelationship, char name, char infec)
-{   
+{
     struct relationship *aux = vertexRelationship->next;
-    
+
     if (vertexRelationship->next == NULL)
     {
-       vertexRelationship->next = createRelationship(name, infec);
-       return vertexRelationship->next;
+        vertexRelationship->next = createRelationship(name, infec);
+        return vertexRelationship->next;
     }
     else
     {
@@ -103,41 +101,32 @@ struct relationship *addRelationshipInGraph(struct vertex *vertexRelationship, c
         {
             if (aux->next == NULL)
             {
-                aux->next = createRelationship(name,infec);
+                aux->next = createRelationship(name, infec);
                 return aux;
-                
             }
             aux = aux->next;
-            
         }
     }
-
 }
 
 void printGraph(struct graph *graph)
 {
     struct vertex *vertex = graph->vertexStart;
-    while (1)
+    while (vertex != NULL)
     {
-        if (vertex == NULL)
+        struct relationship *relationship = vertex->next;
+        printf("Vertex [ %c%c ]-> ", vertex->name, vertex->infection);
+        while (relationship != NULL)
         {
-            puts("achou null");
-            break;
+            printf(" [%c%c] :", relationship->name, relationship->infection);
+            relationship = relationship->next;
         }
-        
-        printf("\nvertex [%c%c] -> ", vertex->name, vertex->infection);
-        struct relationship *aux = graph->vertexStart->next;
-        while(aux != NULL)
-        {
-            printf("R[%c%C] : ", aux->name, aux->infection);
-            aux = aux->next;
-        }
+        puts("\n");
         vertex = vertex->down;
     }
-    
-    
 }
- struct graph * readFile(char *pathfile)
+
+struct graph *readFile(char *pathfile)
 {
     struct graph *graph = createGraph();
     if (graph == NULL)
@@ -153,31 +142,30 @@ void printGraph(struct graph *graph)
 
     char buffer[3];
     struct vertex *vertexPresente = NULL;
-    struct relationship *relationshipPresente = NULL;
-
-   while (fread(&buffer, sizeof(char), 3, file))
-    {   
-        if(buffer[2] == ',')
+    while (fread(&buffer, sizeof(char), 3, file))
+    {
+        if (buffer[2] == ',')
         {
             vertexPresente = searchVertexInGraph(graph->vertexStart, buffer[0]);
-            if(vertexPresente == NULL)
+            if (vertexPresente == NULL)
             {
-                vertexPresente = addvertexInGraph(graph,graph->vertexStart, buffer[0], buffer[1]);
-             
+                vertexPresente = addvertexInGraph(graph, graph->vertexStart, buffer[0], buffer[1]);
+                vertexPresente = searchVertexInGraph(graph->vertexStart, buffer[0]);
             }
         }
 
         if (buffer[2] == '\n')
         {
-           relationshipPresente = addRelationshipInGraph(vertexPresente, buffer[0],buffer[1]);
-        }                
+            addRelationshipInGraph(vertexPresente, buffer[0], buffer[1]);
+        }
     }
+    return graph;
 }
 
 int main()
 {
-    struct graph *g = readFile("teste.csv");
+    struct graph *g = readFile("pablo.csv");
     puts("inseriu");
-    // printGraph(g);
+    printGraph(g);
     return 0;
 }
