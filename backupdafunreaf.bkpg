@@ -1,0 +1,261 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct relationship
+{
+    char name, infection;
+    struct relationship *next;
+};
+
+struct vertex
+{
+    char name, infection;
+    struct vertex *down;
+    struct relationship *next;
+};
+
+struct graph
+{
+    int vertexSize;
+    struct vertex *vertexStart;
+};
+
+struct vertex *createVertex(char name, char infection)
+{
+    struct vertex *newvertex = (struct vertex *)calloc(1,sizeof(struct vertex));
+    newvertex->down = NULL;
+    newvertex->next = NULL;
+    newvertex->name = name;
+    newvertex->infection = infection;
+    return newvertex;
+}
+
+struct relationship *createRelationship(char name, char infection)
+{
+    struct relationship *newrelationship = (struct relationship *)calloc(1,  sizeof(struct relationship));
+    newrelationship->infection = infection;
+    newrelationship->name = name;
+    newrelationship->next = NULL;
+    return newrelationship;
+}
+
+struct graph *createGraph()
+{
+    struct graph *newgraph = (struct graph *) calloc (1, sizeof(struct graph));
+    newgraph->vertexStart = NULL;
+    newgraph->vertexSize = 0;
+    return newgraph;
+}
+
+struct vertex *searchVertexInGraph(struct vertex *vertex, char vertexName)
+{
+    if (vertex == NULL)
+    {
+        return NULL;
+    }
+    
+    if (vertex->name == vertexName)
+    {
+        return vertex;
+    }
+
+    searchVertexInGraph(vertex->down, vertexName);
+}
+
+struct vertex *addvertexInGraph(struct graph *graph, struct vertex *vertex, char name, char infec)
+{
+    if(graph->vertexStart == NULL)
+    {
+         graph->vertexStart = createVertex(name,infec);
+         graph->vertexSize++;
+         return graph->vertexStart;
+    }
+    else
+    {
+        struct vertex *auxVertex = graph->vertexStart;
+        while (1)
+        {
+            if (auxVertex == NULL)
+            {
+                auxVertex = createVertex(name,infec);
+                graph->vertexSize++;
+                return  auxVertex;
+            }
+            auxVertex = auxVertex->down;
+        }
+        
+    }
+    
+}
+
+struct relationship *addRelationshipInGraph(struct vertex *vertexRelationship, char name, char infec)
+{   
+    struct relationship *aux = vertexRelationship->next;
+    
+    if (vertexRelationship->next == NULL)
+    {
+       vertexRelationship->next = createRelationship(name, infec);
+       return vertexRelationship->next;
+    }
+    else
+    {
+        while (1)
+        {
+            if (aux != NULL)
+            {
+                aux = aux->next;
+            }
+            else
+            {
+                aux = createRelationship(name,infec);
+                return aux;
+            }
+            
+        }
+    }
+
+}
+
+void printGraph(struct graph *graph)
+{
+    struct vertex *vertex = graph->vertexStart;
+    while (1)
+    {
+        if (vertex == NULL)
+        {
+            puts("achou null");
+            break;
+        }
+        
+        printf("\nvertex [%c%c] -> ", vertex->name, vertex->infection);
+        struct relationship *aux = graph->vertexStart->next;
+        while(aux != NULL)
+        {
+            printf("R[%c%C] : ", aux->name, aux->infection);
+            aux = aux->next;
+        }
+        vertex = vertex->down;
+    }
+    
+    
+}
+ struct graph * readFile(char *pathfile)
+{
+    struct graph *graph = createGraph();
+    if (graph == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *file = fopen(pathfile, "r");
+    if (file == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    char buffer, auxVertex[2],auxRelationship[2];
+    int controlState = 0, controlRelationship = 0, controlBuff[2];
+    
+    struct vertex *vertexPresente = NULL;
+    struct relationship *relationshipPresente = NULL;
+    
+    controlBuff[1] = 0;    
+    controlBuff[0] = 0;
+    auxVertex[0] = '*';
+    auxVertex[1] = '*';
+    
+    auxRelationship[0] = '*';
+    auxRelationship[1] = '*';
+
+    while (fread(&buffer, sizeof(char), 1, file))
+    {   
+        if (controlBuff[0] == 2)
+        {
+            struct vertex *searchVertex = searchVertexInGraph(graph->vertexStart,auxVertex[0]);
+            if(searchVertex == NULL)
+            {
+                vertexPresente = addvertexInGraph(graph,graph->vertexStart, auxVertex[0],auxVertex[1]);
+                controlBuff[0] = 0;
+                auxVertex[0] = '*';
+                auxVertex[1] = '*';
+            }
+
+        }
+            if (controlBuff[1] == 2)
+            {
+                relationshipPresente = addRelationshipInGraph(vertexPresente, auxRelationship[0],auxRelationship[1]);
+                controlBuff[1] = 0;
+                auxRelationship[0] = '*';
+                auxRelationship[1] = '*';
+            }
+       
+        
+        if (buffer == '#')
+        {
+            printf("\nFINAL\n");
+            return graph;
+        }
+
+        if (buffer == '\n')
+        {
+            controlRelationship = 0;
+            continue; 
+        }
+
+        if (controlRelationship == 1)
+        {
+            if (controlState == 0)
+            {
+                controlState++;
+                // name relacionamenoto
+                auxRelationship[0] = buffer;
+                controlBuff[1]++;
+
+
+            }
+            else
+            {
+                if (controlState == 1)
+                {
+                    controlState = 0;
+                    // numbero de infecção relacionamento
+                    auxRelationship[1] = buffer;
+                    controlBuff[1]++;
+                }
+            }
+            continue;
+        }
+
+        if (buffer == ',')
+        {
+            // relacionamento contole
+            controlRelationship++;
+            continue;
+        }
+
+        if (controlState == 0)
+        {
+            controlState++;
+            // vertex nome
+            auxVertex[0] = buffer; 
+            controlBuff[0]++;
+        }
+        else
+        {
+            if (controlState == 1)
+            {
+                controlState = 0;
+                // numbero de infecção vertex
+                auxVertex[1] = buffer;
+               controlBuff[0]++;
+            }
+        }
+    }
+}
+
+int main()
+{
+    struct graph *g = readFile("teste.csv");
+    printGraph(g);
+    return 0;
+}

@@ -1,0 +1,19 @@
+0 -> sem mascara, sem infecção
+1 -> com mascara, sem infecção
+2 -> com mascara, com infecção
+3 -> sem mascara, com infecção
+
+name/situação
+A   0 (A0)
+
+
+vertex -> node
+aresta -> relacionamento (linha)
+
+
+char *labels[] = {
+        "0 -> Sem máscara, sem infecção da COVID-19",
+        "1 -> Com máscara, sem infecção da COVID-19",
+        "2 -> Com máscara, com infecção da COVID-19",
+        "3 -> Sem máscara, com infecção da COVID-19"
+    };
