@@ -1,0 +1,36 @@
+------------------------------------------------------------------------------------------------------------------------
+Legenda:
+0 -> Sem máscara, sem infecção da COVID-19
+1 -> Com máscara, sem infecção da COVID-19
+2 -> Com máscara, com infecção da COVID-19
+3 -> Sem máscara, com infecção da COVID-19
+------------------------------------------------------------------------------------------------------------------------
+
+[ID] [NumberState] <-|[probability]|-> [ID] [NumberState]
+
+------------------------------------------------------------------------------------------------------------------------
+
+[A][1 -> Com máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [B1][1 -> Com máscara, sem infecção da COVID-19]
+[A][1 -> Com máscara, sem infecção da COVID-19] <-|[	|50%|	]|-> [D3][3 -> Sem máscara, com infecção da COVID-19]
+[B][1 -> Com máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [C0][0 -> Sem máscara, sem infecção da COVID-19]
+[B][1 -> Com máscara, sem infecção da COVID-19] <-|[	|25%|	]|-> [E2][2 -> Com máscara, com infecção da COVID-19]
+[C][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|50%|	]|-> [E2][2 -> Com máscara, com infecção da COVID-19]
+[C][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|50%|	]|-> [F2][2 -> Com máscara, com infecção da COVID-19]
+[D][3 -> Sem máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [G0][0 -> Sem máscara, sem infecção da COVID-19]
+[D][3 -> Sem máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [E2][2 -> Com máscara, com infecção da COVID-19]
+[D][3 -> Sem máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [H1][1 -> Com máscara, sem infecção da COVID-19]
+[D][3 -> Sem máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [I0][0 -> Sem máscara, sem infecção da COVID-19]
+[E][2 -> Com máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [G0][0 -> Sem máscara, sem infecção da COVID-19]
+[E][2 -> Com máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [A1][1 -> Com máscara, sem infecção da COVID-19]
+[F][2 -> Com máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [B1][1 -> Com máscara, sem infecção da COVID-19]
+[F][2 -> Com máscara, com infecção da COVID-19] <-|[	|100%|	]|-> [C0][0 -> Sem máscara, sem infecção da COVID-19]
+[G][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [G0][0 -> Sem máscara, sem infecção da COVID-19]
+[G][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [A1][1 -> Com máscara, sem infecção da COVID-19]
+[G][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [B1][1 -> Com máscara, sem infecção da COVID-19]
+[G][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [C0][0 -> Sem máscara, sem infecção da COVID-19]
+[G][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|50%|	]|-> [E2][2 -> Com máscara, com infecção da COVID-19]
+[G][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [I0][0 -> Sem máscara, sem infecção da COVID-19]
+[H][1 -> Com máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [H1][1 -> Com máscara, sem infecção da COVID-19]
+[I][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [H1][1 -> Com máscara, sem infecção da COVID-19]
+[I][0 -> Sem máscara, sem infecção da COVID-19] <-|[	|0%|	]|-> [C0][0 -> Sem máscara, sem infecção da COVID-19]
+------------------------------------------------------------------------------------------------------------------------
