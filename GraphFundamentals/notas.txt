@@ -1,0 +1,8 @@
+ordem = quantidade de vertices
+
+grau = o numero de arestas no mesmo verctices
+
+regular = Um grafo é dito ser regular quando todos os seus vértices tem o mesmo grau.
+
+completo = Um grafo é dito ser completo quando há uma aresta entre cada par de seus vértices.
+Estes grafos são designados por Kn, onde n é a ordem do grafo.
