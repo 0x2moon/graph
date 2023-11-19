@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#define DOT "small.dot"
-#define BRANCO 0
-#define PRETO 1
+#define DOT "input/big.dot"
+#define OUT -2
+#define OFF -1
+#define VISITED 0
+#define ON 1
 
 // Estrutura do grafo
 struct corresponding
@@ -30,13 +32,20 @@ struct graph
     struct vertex *vertexStart;
 };
 
+struct queue 
+{
+    int status;
+    struct vertex *toExploreVertex;
+    struct corresponding *toExploreCorresp;
+};
+
 // funções de criação do grafo
 struct corresponding *createCorresponding(char name)
 {
     struct corresponding *newCor = (struct corresponding *)malloc(sizeof(struct corresponding));
     newCor->next = NULL;
     newCor->name = name;
-    newCor->check = BRANCO;
+    newCor->check = OFF;
     return newCor;
 }
 
@@ -46,7 +55,7 @@ struct vertex *createVertex(char name)
     newVertex->down = NULL;
     newVertex->next = NULL;
     newVertex->name = name;
-    newVertex->check = BRANCO;
+    newVertex->check = OFF;
     return newVertex;
 }
 
@@ -56,7 +65,7 @@ struct graph *createGraph()
     newGraph->vertexStart = NULL;
     newGraph->vertexSize = 0;
     newGraph->nameGraph = NULL;
-    newGraph->connection = BRANCO;
+    newGraph->connection = OFF;
     return newGraph;
 }
 
@@ -122,6 +131,8 @@ struct vertex *searchVertexInGraph(struct vertex *vertex, char vertexName)
 
     searchVertexInGraph(vertex->down, vertexName);
 }
+
+
 
 void readNameGraphDot(struct graph *graph, FILE *file)
 {
@@ -240,20 +251,6 @@ struct graph *fillGraphFile(char *pathfile)
 
 // Operações de fundamentos do grafo
 
-void searchCorrespondingOfVertex(struct vertex *vertex, char vertexName)
-{
-    struct corresponding *corresponding = vertex->next;
-    while (corresponding != NULL)
-    {
-        if (corresponding->name == vertexName)
-        {
-            corresponding->check = true;
-            vertex->check = true;
-            return;
-        }
-        corresponding = corresponding->next;
-    }
-}
 
 // Desalocar o grafo
 void freeCorrespondingAllocationStructure(struct corresponding *corresponding)
@@ -295,10 +292,10 @@ void printGraphAllocationStructure(struct graph *graph)
     while (vertex != NULL)
     {
         struct corresponding *corresponding = vertex->next;
-        printf("Vertex [ %c - [%d]]-> ", vertex->name,vertex->check);
+        printf("Vertex [ %c [%X]]-> ", vertex->name,vertex);
         while (corresponding != NULL)
         {
-            printf(" [ %c - [%d] ] :", corresponding->name, corresponding->check);
+            printf(" [ %c [%X]] :", corresponding->name, corresponding);
             corresponding = corresponding->next;
         }
         puts("\n");
@@ -311,48 +308,33 @@ void printGraphAllocationStructure(struct graph *graph)
 
 
 
+// conexo
 
-
-
-
-
-
-void dps(struct graph *graph, char visitados[], char stack[], int i, int j)
+void isGraphConnected(struct graph *graph)
 {
-    while (vs != NULL)
+    struct vertex *vertexAux = graph->vertexStart;
+    struct corresponding *correspAux = vertexAux->next;
+    struct vertex *prev = vertexAux;
+    printf("%c ",vertexAux->name);
+    vertexAux  = searchVertexInGraph(graph->vertexStart, correspAux->name);
+    correspAux = vertexAux->next;
+    printf("%c ",vertexAux->name);
+    while (correspAux != NULL)
     {
-        vs->check = 1;
-        visitados[i] = vs->name;
-        struct corresponding *aux = vs->next;
-        while (aux != NULL)
+        if (correspAux->name == prev->name)
         {
-            stack[j] = aux->name;
-            aux = aux->next;
-            j++;
-            
+            correspAux = correspAux->next;
+            continue;          
         }
-        if (stack[j] != '0')
-        {
-            vs = searchVertexInGraph(graph->vertexStart, stack[j]);
-        }
-        
+        prev = vertexAux;
+        vertexAux  = searchVertexInGraph(graph->vertexStart, correspAux->name);
+        correspAux = vertexAux->next;
+        printf("%c ",vertexAux->name);
     }
-    
+    printf("\n");
 }
 
-void t(struct graph *graph){
 
-    char visitados[graph->vertexSize], stack[graph->vertexSize];
-    struct vertex *vs = graph->vertexStart;
-    for (int h = 0; h < graph->vertexSize; h++)
-        {
-            visitados[h] = '0';
-            stack[h] = '0';
-        }
-
-
-    int i = 0, j = 0;
-}
 
 
 
@@ -360,10 +342,10 @@ void t(struct graph *graph){
 int main()
 {
     struct graph *g = fillGraphFile(DOT);
-    printGraphAllocationStructure(g);
-    dps(g);
+    // printGraphAllocationStructure(g);
+    isGraphConnected(g);
     puts("\n\n\n");
-    printGraphAllocationStructure(g);
+    // printGraphAllocationStructure(g);
     // printf("vertex size %d", g->vertexSize);
     freeGraphAllocationStructure(g);
 }
